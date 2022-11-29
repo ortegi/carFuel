@@ -17,6 +17,7 @@ function showPosition(position){
     let lat= position.coords.latitude
     let long= position.coords.longitude
     getAdress(lat,long)
+    
 
 }
 
@@ -26,26 +27,31 @@ async function getAdress(lat,lon){
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=18&addressdetails=1`)
         if (response.ok){
             const jsonResponse = await response.json()
-           // let town = jsonResponse.address.town
-            //let code = jsonResponse.address.postcode
-            let address = jsonResponse.display_name
-
-
+            let road = jsonResponse.address.road
+            let residencial = jsonResponse.address.residential
+            let town = jsonResponse.address.town
+            let generalAdress = jsonResponse.display_name
             console.log(jsonResponse)
-            showAdress(address, jsonResponse)
+            showAdress(road,residencial, town, generalAdress)
         }
     }catch(error){
         console.log(error)
     }
 }
 
-function showAdress(address, jsonResponse){
+function showAdress(road, residencial, town, general){
     let x = document.querySelector('#adress')
-    x.value = `${address}`
-    let y = document.querySelector('#test')
-    y.innerHTML = `<p>${jsonResponse.address.residential}, ${jsonResponse.address.residential} 
-    ${jsonResponse.address.suburb}
-    ${jsonResponse.address.postcode}
+    if (road){
+        x.value = `${road}, ${town}`
+    }else if (residencial) {
+        x.value = `${residencial}, ${town}`
+    }else {
+        x.value =  `${general}`
+
+    }
+    
+ 
+    
   
-    </p>`
+    
 }
